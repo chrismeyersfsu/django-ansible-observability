@@ -1,1 +1,6 @@
 __pycache__/
+
+# Vim swap files
+*.swp
+*.swo
+*~

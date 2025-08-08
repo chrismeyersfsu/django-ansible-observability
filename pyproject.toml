@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-ansible-observability"
+version = "0.1.0"
+description = "Django application for Ansible observability with OpenTelemetry integration"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Chris Meyers", email = "chris.meyers.fsu@gmail.com"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Monitoring",
+]
+dependencies = [
+    "Django>=4.2.21,<4.3.0",
+    "opentelemetry-api",
+    "opentelemetry-sdk",
+    "opentelemetry-instrumentation-django",
+    "opentelemetry-instrumentation-grpc",
+    "opentelemetry-instrumentation-psycopg",
+    "opentelemetry-instrumentation-psycopg2",
+    "opentelemetry-instrumentation-requests",
+    "opentelemetry-exporter-otlp-proto-grpc",
+    "opentelemetry-exporter-richconsole",
+    "requests",
+    "psycopg",
+    "psycopg2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-django",
+    "black",
+    "flake8",
+    "mypy",
+]
+
+[project.urls]
+Homepage = "https://github.com/chrismeyersfsu/django-ansible-observability"
+Repository = "https://github.com/chrismeyersfsu/django-ansible-observability"
+Issues = "https://github.com/chrismeyersfsu/django-ansible-observability/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ansible_observe*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.py", "*.txt", "*.md"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
