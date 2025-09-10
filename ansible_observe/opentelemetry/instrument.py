@@ -14,10 +14,11 @@ from opentelemetry.exporter.richconsole import RichConsoleSpanExporter
 from django.conf import settings
 
 
-def setup_tracing():
+def setup_tracing(service_name=None):
+    service_name = service_name or os.environ.get("OTEL_SERVICE_NAME", "aap-generic")
     # Service name is required for traces to be associated with a service
     resource = Resource(attributes={
-        SERVICE_NAME: os.environ.get("OTEL_SERVICE_NAME", "aap-generic")
+        SERVICE_NAME: service_name,
     })
 
     # The TracerProvider is the entry point to tracing
