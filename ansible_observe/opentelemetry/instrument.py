@@ -3,6 +3,7 @@ import os
 from opentelemetry import trace
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.grpc import GrpcInstrumentorServer
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -49,3 +50,4 @@ def setup_tracing(service_name=None):
             print("psycopg2 nor psycopg found. Failed to instrument psycopg.")
     RequestsInstrumentor().instrument()
     GrpcInstrumentorServer().instrument()
+    LoggingInstrumentor().instrument()
