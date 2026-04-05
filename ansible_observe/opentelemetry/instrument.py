@@ -56,6 +56,12 @@ def _setup_logging(resource: Resource):
     handler = LoggingHandler(level=logging.getLogger().level, logger_provider=logger_provider)
     logging.getLogger().addHandler(handler)
 
+def _request_hook(span, request):
+    test_name = request.META.get('HTTP_X_TEST_NAME')
+    if test_name and span and span.is_recording():
+        span.set_attribute('test.name', test_name)
+
+
 def setup_tracing(service_name=None):
     # Should rename this function to setup_telemetry()
 
@@ -64,7 +70,7 @@ def setup_tracing(service_name=None):
     resource = _setup_tracing(service_name)
     _setup_logging(resource)
 
-    DjangoInstrumentor().instrument()
+    DjangoInstrumentor().instrument(request_hook=_request_hook)
     try:
         import psycopg2
         from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
