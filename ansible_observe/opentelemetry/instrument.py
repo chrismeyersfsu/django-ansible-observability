@@ -56,7 +56,6 @@ def _setup_logging(resource: Resource):
     handler = LoggingHandler(level=logging.getLogger().level, logger_provider=logger_provider)
     logging.getLogger().addHandler(handler)
 
-
 def setup_tracing(service_name=None):
     # Should rename this function to setup_telemetry()
 
