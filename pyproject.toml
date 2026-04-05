@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-ansible-observability"
-version = "0.1.5"
+version = "0.1.6"
 description = "Django application for Ansible observability with OpenTelemetry integration"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -16,6 +16,9 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: Django",
     "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -29,7 +32,7 @@ classifiers = [
     "Topic :: System :: Monitoring",
 ]
 dependencies = [
-    "Django>=4.2.21,<4.3.0",
+    "Django>=4.2.21",
     "opentelemetry-api",
     "opentelemetry-sdk",
     "opentelemetry-instrumentation-django",
