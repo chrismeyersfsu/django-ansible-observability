@@ -42,7 +42,7 @@ def _setup_tracing(service_name=None) -> Resource:
 
     return resource
 
-def _setup_logging(resource: Resource):
+def _setup_logging(resource: Resource, instrument_non_propagating: bool = True):
     logger_provider = LoggerProvider(resource=resource)
     set_logger_provider(logger_provider)
 
@@ -53,8 +53,18 @@ def _setup_logging(resource: Resource):
     logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
 
     # Integrate with Python's standard logging
-    handler = LoggingHandler(level=logging.getLogger().level, logger_provider=logger_provider)
+    handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
     logging.getLogger().addHandler(handler)
+
+    if instrument_non_propagating:
+        # Django apps often configure named loggers with propagate=False for
+        # intentional routing (e.g. awx.main.tasks, awx.main.scheduler).
+        # Those records never reach the root logger and therefore miss the
+        # LoggingHandler above. Attach the handler directly to each such
+        # logger so their records still flow into the OTEL log pipeline.
+        for _name, _logger in logging.Logger.manager.loggerDict.items():
+            if isinstance(_logger, logging.Logger) and not _logger.propagate:
+                _logger.addHandler(handler)
 
 def _request_hook(span, request):
     test_name = request.META.get('HTTP_X_TEST_NAME')
@@ -62,13 +72,13 @@ def _request_hook(span, request):
         span.set_attribute('test.name', test_name)
 
 
-def setup_tracing(service_name=None):
+def setup_tracing(service_name=None, instrument_non_propagating: bool = True):
     # Should rename this function to setup_telemetry()
 
     service_name = service_name or os.environ.get("OTEL_SERVICE_NAME", "aap-generic")
 
     resource = _setup_tracing(service_name)
-    _setup_logging(resource)
+    _setup_logging(resource, instrument_non_propagating=instrument_non_propagating)
 
     DjangoInstrumentor().instrument(request_hook=_request_hook)
     try:
