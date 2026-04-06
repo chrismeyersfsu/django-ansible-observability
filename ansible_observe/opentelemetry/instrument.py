@@ -1,3 +1,4 @@
+import contextvars
 import os
 import logging
 
@@ -66,10 +67,19 @@ def _setup_logging(resource: Resource, instrument_non_propagating: bool = True):
             if isinstance(_logger, logging.Logger) and not _logger.propagate:
                 _logger.addHandler(handler)
 
+_active_test_name: contextvars.ContextVar[str] = contextvars.ContextVar('active_test_name', default='')
+
+
 def _request_hook(span, request):
     test_name = request.META.get('HTTP_X_TEST_NAME')
     if test_name and span and span.is_recording():
         span.set_attribute('test.name', test_name)
+        _active_test_name.set(test_name)
+
+
+def _outgoing_request_hook(span, request):
+    if test_name := _active_test_name.get():
+        request.headers['X-Test-Name'] = test_name
 
 
 def setup_tracing(service_name=None, instrument_non_propagating: bool = True):
@@ -92,6 +102,6 @@ def setup_tracing(service_name=None, instrument_non_propagating: bool = True):
             PsycopgInstrumentor().instrument()
         except ModuleNotFoundError:
             print("psycopg2 nor psycopg found. Failed to instrument psycopg.")
-    RequestsInstrumentor().instrument()
+    RequestsInstrumentor().instrument(request_hook=_outgoing_request_hook)
     GrpcInstrumentorServer().instrument()
     LoggingInstrumentor().instrument()
