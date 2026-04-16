@@ -1,5 +1,29 @@
 # Django Ansible Observability
 
+⚠️ **DEPRECATED** - This package is deprecated in favor of [`django-ansible-base`](https://github.com/ansible/django-ansible-base).
+
+## Migration Required
+
+Observability functionality has been consolidated into `django-ansible-base`. This package will not receive updates after 2026-06-16.
+
+### Update Your Imports
+
+Replace:
+```python
+from ansible_observe.opentelemetry import setup_tracing
+```
+
+With:
+```python
+from ansible_base.observability import setup_tracing
+```
+
+See the [django-ansible-base documentation](https://github.com/ansible/django-ansible-base) for the latest observability setup and configuration.
+
+---
+
+## Legacy Usage
+
 ```
 pip3 -m venv .venv
 pip install -e .
